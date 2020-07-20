@@ -82,21 +82,26 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
         recyclerView = findViewById(R.id.recyclerview);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
 
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(LocationActivity.this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        manager1 = (LocationManager) LocationActivity.this.getSystemService(Context.LOCATION_SERVICE);
-        if (!manager1.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            buildAlertMessageNoGps();
-        } else {
-            fetchLocation();
-        }
+//        manager1 = (LocationManager) LocationActivity.this.getSystemService(Context.LOCATION_SERVICE);
+
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        manager1 = (LocationManager) LocationActivity.this.getSystemService(Context.LOCATION_SERVICE);
+        if (!manager1.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+        }else {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+            fetchLocation();
+        }
+        }
 
 
     private void buildAlertMessageNoGps() {
@@ -138,6 +143,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     assert supportMapFragment != null;
                     supportMapFragment.getMapAsync(LocationActivity.this);
                     onLocationSearch(String.valueOf(currentLocation.getLatitude()),String.valueOf(currentLocation.getLongitude()));
+                }else{
+                    Toast.makeText(LocationActivity.this, "Please Try Again Later", Toast.LENGTH_SHORT).show();
                 }
             }
         });
